@@ -20,6 +20,7 @@ std::vector<int> readNumbers(std::istream& input) {
   std::istream_iterator<int> begin(line_stream), end;
   
   auto vector = std::vector<int>(begin, end); 
+  std::cout << "Address: " << &vector << std::endl;
   return vector;
 }
 
@@ -35,7 +36,12 @@ TEST(Exercise1, ReadNumbersTest) {
   std::stringstream stream;
   stream << "2 1 5 3 4";
 
-  auto v = readNumbers(stream);
+  auto vector = readNumbers(stream);
+  std::cout << "Address: " << &vector << std::endl;
 
-  ASSERT_THAT(v, ::testing::ElementsAre(2, 1, 5, 3, 4));
+  auto vector2 = std::vector<int>(vector.begin(), vector.end());
+  std::cout << "Address: " << &vector2 << std::endl;
+
+
+  ASSERT_THAT(vector, ::testing::ElementsAre(2, 1, 5, 3, 4));
 }
