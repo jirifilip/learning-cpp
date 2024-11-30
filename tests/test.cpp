@@ -47,7 +47,7 @@ TEST(Exercise1, ReadNumbersTest) {
 }
 
 
-TEST(Streams, TestingHowStreamsWork) {
+TEST(MessingAround, TestingHowStreamsWork) {
   std::stringstream stream;
 
   stream << "2 1.0 ahoj";
@@ -63,4 +63,46 @@ TEST(Streams, TestingHowStreamsWork) {
   ASSERT_EQ(numberFromStream, 2);
   ASSERT_EQ(floatFromStream, 1.0);
   ASSERT_EQ(stringFromStream, "ahoj");
+}
+
+
+TEST(MessingAround, TestingHowIteratorsWork) {
+  std::vector<int> vec{1, 2, 3, 4};
+
+  for (auto number: vec) {
+    std::cout << number << " "; 
+  }
+
+  std::vector<int>::iterator iter = vec.begin();
+  
+  int i = 1;
+  while (iter != vec.end()) {
+    ASSERT_EQ(i, *iter);
+    i++;
+    iter++;
+  }
+}
+
+
+class CustomDereference {
+  public:
+  std::string operator *() {
+    return "This is my custom dereference operator";
+  } 
+};
+
+std::ostream& operator <<(std::ostream &os, const CustomDereference &instance) {
+  return os << "CustomDereference()" << &instance;
+}
+
+
+TEST(MessingAround, CustomDereference) {
+  CustomDereference custom{};
+
+  std::stringstream stream;
+
+  stream << custom;
+
+  ASSERT_EQ(*custom, "This is my custom dereference operator");
+  ASSERT_THAT(stream.str(), ::testing::StartsWith("CustomDereference()"));
 }
