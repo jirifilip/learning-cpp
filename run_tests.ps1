@@ -17,5 +17,7 @@ g++ `
 	-l gmock `
 	-l gtest_main `
 	-l:lib.a
-
-out/test.exe
+	
+if ($?) {
+	out/test.exe
+}

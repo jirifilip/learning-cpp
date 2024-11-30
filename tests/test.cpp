@@ -25,11 +25,11 @@ std::vector<int> readNumbers(std::istream& input) {
 }
 
 
-
 TEST(LibTest, Plus) {
   ASSERT_EQ(plus(1, 2), 3);
   ASSERT_EQ(plus(20, 1), 21);
 }
+
 
 // https://www.hackerrank.com/challenges/vector-sort/problem
 TEST(Exercise1, ReadNumbersTest) {
@@ -44,4 +44,23 @@ TEST(Exercise1, ReadNumbersTest) {
 
 
   ASSERT_THAT(vector, ::testing::ElementsAre(2, 1, 5, 3, 4));
+}
+
+
+TEST(Streams, TestingHowStreamsWork) {
+  std::stringstream stream;
+
+  stream << "2 1.0 ahoj";
+
+  int numberFromStream;
+  float floatFromStream;
+  std::string stringFromStream;
+
+  stream >> numberFromStream;
+  stream >> floatFromStream;
+  stream >> stringFromStream;
+
+  ASSERT_EQ(numberFromStream, 2);
+  ASSERT_EQ(floatFromStream, 1.0);
+  ASSERT_EQ(stringFromStream, "ahoj");
 }
