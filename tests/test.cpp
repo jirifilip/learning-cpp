@@ -11,6 +11,8 @@
 #include <utility>
 #include <iterator>
 
+#include "basic_memory.cpp"
+
 
 std::vector<int> readNumbers(std::istream& input) {
   std::string line;
@@ -106,3 +108,5 @@ TEST(MessingAround, CustomDereference) {
   ASSERT_EQ(*custom, "This is my custom dereference operator");
   ASSERT_THAT(stream.str(), ::testing::StartsWith("CustomDereference()"));
 }
+
+
