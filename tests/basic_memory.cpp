@@ -121,3 +121,24 @@ TEST(MemoryTest, StringView) {
     ASSERT_EQ(x.data(), y.data());
     ASSERT_NE(x.data(), differentX.data());
 }
+
+
+TEST(MemoryTest, InitVar) {
+    char c1 {};
+    int i1 {};
+
+    ASSERT_EQ(c1, '\0');
+    ASSERT_EQ(i1, 0);
+}
+
+
+TEST(MemoryTest, DereferencingArray) {
+    int x {2};
+    int array[] { 1, 2, 3, 4, 5};
+
+    ASSERT_EQ(*(&x), 2);
+
+    ASSERT_THAT(array, ::testing::ElementsAre(1, 2, 3, 4, 5));
+    ASSERT_EQ(*array, 1);
+    ASSERT_EQ(*(array + 4), 5);
+}
