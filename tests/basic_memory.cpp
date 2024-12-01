@@ -40,8 +40,7 @@ TEST(MemoryTest, DanglingReference) {
 
 TEST(MemoryTest, ConstReference) {
     int origin{ 42 };
-    const int& reference{ origin
-     };
+    const int& reference{ origin };
 
     origin++;
 
