@@ -40,7 +40,8 @@ TEST(MemoryTest, DanglingReference) {
 
 TEST(MemoryTest, ConstReference) {
     int origin{ 42 };
-    const int& reference{ origin };
+    const int& reference{ origin
+     };
 
     origin++;
 
@@ -57,4 +58,67 @@ TEST(MemoryTest, ConstReferenceDifferentTypes) {
 
     ASSERT_EQ(reference, 42);    
     ASSERT_EQ(origin, 43);
+}
+
+
+std::string& sampleFunction(std::string& someString) {
+    return someString;
+}
+
+TEST(MemoryTest, PassingStringByReference) {
+    std::string sampleString{ "Some text" };
+
+    ASSERT_EQ(&sampleString, &sampleFunction(sampleString));
+}
+
+
+TEST(MemoryTest, StringComparison) {
+    std::string text1{ "text" };
+    std::string text2{ "text" };
+
+    ASSERT_TRUE(text1 == text1);
+    ASSERT_TRUE(text1 == text2);
+}
+
+
+std::string& alterString(std::string& text) {
+    text = "hello";
+    return text;
+}
+
+
+TEST(MemoryTest, PassByReferenceAndAlterValue) {
+    std::string text = "goodbye";
+
+    alterString(text);
+
+    ASSERT_EQ(text, "hello");
+}
+
+
+const double& passByDifferentType(const double& x) {
+    return x;
+}
+
+
+TEST(MemoryTest, PassByReferenceButDifferentType) {
+    int x = 2;
+
+    const double y = passByDifferentType(x);
+    x++;
+    
+    ASSERT_EQ(x, 3);
+    ASSERT_EQ(y, 2);
+}
+
+
+TEST(MemoryTest, StringView) {
+    std::string_view x{ "Hello world" };
+    std::string differentX{ "Hello world" };
+
+    std::string_view y{ x.substr(0, 5) };
+    
+    ASSERT_EQ(y, "Hello");
+    ASSERT_EQ(x.data(), y.data());
+    ASSERT_NE(x.data(), differentX.data());
 }
