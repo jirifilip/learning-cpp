@@ -51,3 +51,17 @@ TEST(StructTests, ReturningStructShouldMakeACopy) {
     ASSERT_NE(&hw, pointer);
     ASSERT_THAT(pointer, ::testing::IsNull());
 }
+
+
+enum Color {
+    red,
+    green,
+    blue,
+};
+
+
+TEST(StructTests, TestEnumCreation) {
+    Color c { green };
+
+    ASSERT_EQ(c, Color::green);
+}
