@@ -12,6 +12,7 @@
 #include <iterator>
 
 #include "basic_memory.cpp"
+#include "collections.cpp"
 
 
 std::vector<int> readNumbers(std::istream& input) {
