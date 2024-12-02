@@ -13,6 +13,7 @@
 
 #include "basic_memory.cpp"
 #include "collections.cpp"
+#include "structs.cpp"
 
 
 std::vector<int> readNumbers(std::istream& input) {
