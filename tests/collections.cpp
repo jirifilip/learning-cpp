@@ -5,6 +5,7 @@
 #include <numeric>
 #include <limits>
 #include <list>
+#include <optional>
 
 
 TEST(CollectionsTest, BasicVector) {
@@ -108,4 +109,55 @@ TEST(CollectionTest, TestFrontInsertingIterator) {
     }
 
     ASSERT_THAT(l, ::testing::ElementsAre(0, 1, 2, 3, 4));
+}
+
+
+template<typename T>
+class NotReallyIterator {
+
+private:
+    static const int MAX_SIZE = 10;
+    std::array<std::optional<T>, MAX_SIZE> array{std::nullopt};
+    int currentIndex = 0;
+
+public:
+    void operator ++() {
+        currentIndex += 1;
+    }
+
+    void operator =(T& element) {
+        this->array[currentIndex] = element;
+    }
+
+    std::vector<T> getNonEmpty() {
+        std::vector<T> nonEmpty{};
+        
+        for (int i = 0; i < MAX_SIZE; i++) {
+            if (array[i].has_value()) {
+                nonEmpty.push_back(
+                    array[i].value()
+                );
+            }
+        }
+
+        return nonEmpty;
+    } 
+};
+
+
+TEST(CollectionTest, TestCustomIteratorLikeObject) {
+    NotReallyIterator<std::string> iterator{};
+
+    std::vector<std::string> elements = {"hello", "bye", "goodbye", "hello", "salut"};
+
+    for (auto el : elements) {
+        iterator = el;
+        ++iterator;
+        ++iterator;
+    }
+
+    ASSERT_THAT(
+        iterator.getNonEmpty(),
+        ::testing::ElementsAre("hello", "bye", "goodbye", "hello", "salut")
+    );
 }
