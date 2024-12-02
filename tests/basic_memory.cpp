@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <optional>
 
 
 TEST(MemoryTest, TestReferences) {
@@ -141,4 +142,82 @@ TEST(MemoryTest, DereferencingArray) {
     ASSERT_THAT(array, ::testing::ElementsAre(1, 2, 3, 4, 5));
     ASSERT_EQ(*array, 1);
     ASSERT_EQ(*(array + 4), 5);
+}
+
+
+void changingWithPointer(std::string* stringPointer) {
+    *stringPointer = "Goodbye";    
+}
+
+
+TEST(MemoryTest, ChangingStringByPointer) {
+    std::string testString = "Hello";
+
+    changingWithPointer(&testString);
+    
+    ASSERT_EQ(testString, "Goodbye");
+}
+
+
+int testOptionalArguments(int x = 4) {
+    return x;
+}
+
+
+TEST(MemoryTest, TestOptionalArguments) {
+    ASSERT_EQ(testOptionalArguments(), 4);
+    ASSERT_EQ(testOptionalArguments(5), 5);
+}
+
+
+std::string& returnByReference() {
+    static std::string someString{ "John went to work" };
+
+    return someString;
+}
+
+
+TEST(MemoryTest, ReturnByReference) {
+    ASSERT_EQ(returnByReference(), "John went to work");
+}
+
+
+std::optional<int> divide(int x, int y) {
+    if (y == 0) {
+        return std::nullopt;
+    }
+
+    return x / y;
+}
+
+
+TEST(MemoryTest, TestOptionalType) {
+    std::optional<int> result = divide(5, 0);
+
+    ASSERT_EQ(result.value_or(0), 0);
+}
+
+
+class Employee {
+public:
+    Employee(std::string name) : name(name) {} 
+    std::string name;
+};
+
+
+std::string getName(std::optional<std::reference_wrapper<Employee>> employee = std::nullopt) {
+    if (employee.has_value()) {
+        return employee.value().get().name;
+    } 
+
+    return "no-name";
+}
+
+
+TEST(MemoryTest, TestOptionalTypeWithReference) {
+    Employee john{ "John" };
+
+    ASSERT_EQ(john.name, "John");
+    ASSERT_EQ(getName(john), "John");
+    ASSERT_EQ(getName(), "no-name");
 }
