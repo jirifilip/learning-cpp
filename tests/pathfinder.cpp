@@ -16,8 +16,24 @@ public:
         );
     }
     
-    std::list<V> find(const V vertex1, const V vertex2, const std::function<bool(E)>& filter) {
-        return std::list<V>();
+    std::vector<std::tuple<V, V, E>> find(const V& vertex1, const V& vertex2, const std::function<bool(E)>& filter) {
+        std::cout << vertex1;
+        std::cout << vertex2;
+        (void)filter;
+
+        std::vector<std::tuple<V, V, E>> v{};
+
+        std::copy_if(
+            vertices.begin(),
+            vertices.end(),
+            std::back_inserter(v),
+            [filter](std::tuple<V, V, E> input) {
+                auto edge = std::get<2>(input);
+                return filter(edge);
+            }
+        );
+
+        return v;
     };
 };
 
@@ -35,6 +51,31 @@ TEST(PathFinderTests, Instantiate) {
 TEST(PathFinderTests, AddVertices) {
     PathFinder<std::string, int> pathfinder{};
 
-    pathfinder.add("hello", "goodbe", 2);
+    pathfinder.add("hello", "goodbye", 2);
     pathfinder.add("hello", "meowww", 30);
+
+    std::string text1 = "hello";
+
+    pathfinder.find(
+        text1,
+        text1,
+        [](int x) -> bool {
+            (void)x;
+            return true;
+        }
+    );
+
+    ASSERT_THAT(
+        pathfinder.find(
+            text1,
+            text1,
+            [](int x) -> bool {
+                return x > 15;
+            }
+        ),
+        ::testing::ElementsAre(
+            std::tuple{"hello", "meowww", 30}
+        )
+    );
 }
+

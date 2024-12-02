@@ -221,3 +221,4 @@ TEST(MemoryTest, TestOptionalTypeWithReference) {
     ASSERT_EQ(getName(john), "John");
     ASSERT_EQ(getName(), "no-name");
 }
+
