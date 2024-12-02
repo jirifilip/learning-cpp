@@ -14,6 +14,7 @@
 #include "basic_memory.cpp"
 #include "collections.cpp"
 #include "user_types.cpp"
+#include "pathfinder.cpp"
 
 
 std::vector<int> readNumbers(std::istream& input) {
