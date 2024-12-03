@@ -3,6 +3,7 @@
 
 #include <map>
 #include <list>
+#include <queue>
 
 
 template<typename V, typename E>
@@ -53,9 +54,36 @@ public:
     }
 
     std::vector<V> getShortestPathBetween(const V& vertex1, const V& vertex2) {
-        (void)vertex2;
+        std::queue<std::vector<V>> vertexQueue{};
 
-        return adjacencyMatrix[vertex1];
+        vertexQueue.push({vertex1});
+
+        while (!vertexQueue.empty()) {
+            auto path = vertexQueue.front();
+            auto lastVertex = path.back();
+
+            if (lastVertex == vertex2) {
+                return path;
+            }
+
+            std::vector<V> adjacentVertices;
+            if (adjacencyMatrix.contains(lastVertex)) {
+                adjacentVertices = adjacencyMatrix[lastVertex];
+            } else {
+                adjacentVertices = std::vector<V>{};
+            }
+
+            for (auto& adjacentVertex : adjacentVertices) {
+                std::vector<V> newPath{ path };
+                newPath.push_back(adjacentVertex);
+                
+                vertexQueue.push(newPath);
+            }
+
+            return adjacencyMatrix[vertex1];
+        }
+
+        return std::vector<V>{};
     }
     
 
@@ -99,16 +127,15 @@ TEST(PathFinderTests, AddVertices) {
 
 TEST(PathFinderTests, InstantiateBFS) {
     std::vector<std::pair<std::string, std::string>> ajdacentVertices {
-        {"hello", "goodbye"},
-        {"hello", "bye"},
-        {"name", "John"},
-        {"etc1", "etc2"}
+        {"1", "2"},
+        {"2", "3"},
+        {"3", "4"},
     };
 
     BreadthFirstSearch<std::string> bfs{ajdacentVertices};
 
     ASSERT_THAT(
-        bfs.getShortestPathBetween("hello", "etc2"),
-        ::testing::ElementsAre("goodbye", "bye")
+        bfs.getShortestPathBetween("1", "4"),
+        ::testing::ElementsAre("1", "2", "3", "4")
     );
 }

@@ -16,6 +16,7 @@ g++ `
 	-l gtest `
 	-l gmock `
 	-l gtest_main `
+	-std=c++20 `
 	-l:lib.a
 	
 if ($?) {
