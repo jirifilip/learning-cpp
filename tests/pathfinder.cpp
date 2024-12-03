@@ -7,8 +7,6 @@
 
 template<typename V, typename E>
 class PathFinder {
-private:
-    std::vector<std::tuple<V, V, E>> vertices{}; 
 public:
     void add(const V vertex1, const V vertex2, const E edge) {
         vertices.push_back(
@@ -17,26 +15,32 @@ public:
     }
     
     std::vector<std::tuple<V, V, E>> find(const V& vertex1, const V& vertex2, const std::function<bool(E)>& filter) {
-        std::cout << vertex1;
-        std::cout << vertex2;
-        (void)filter;
+        (void)vertex1;
+        (void)vertex2;
+        auto prefilteredVertices = prefilterVertices(filter);
 
-        std::vector<std::tuple<V, V, E>> v{};
+        return prefilteredVertices;
+    };
+
+private:
+    std::vector<std::tuple<V, V, E>> vertices{}; 
+
+    std::vector<std::tuple<V, V, E>> prefilterVertices(const std::function<bool(E)>& filter) {
+        std::vector<std::tuple<V, V, E>> prefilteredVertices{};
 
         std::copy_if(
             vertices.begin(),
             vertices.end(),
-            std::back_inserter(v),
+            std::back_inserter(prefilteredVertices),
             [filter](std::tuple<V, V, E> input) {
                 auto edge = std::get<2>(input);
                 return filter(edge);
             }
         );
 
-        return v;
-    };
+        return prefilteredVertices;
+    }
 };
-
 
 
 
