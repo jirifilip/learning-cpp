@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-
+#include <map>
 #include <list>
 
 
@@ -43,6 +43,28 @@ private:
 };
 
 
+template <typename V>
+class BreadthFirstSearch {
+public:
+    BreadthFirstSearch(const std::vector<std::pair<V, V>>& adjacentVertices) {
+        for (auto& adjacentPair : adjacentVertices) {
+            this->adjacencyMatrix[adjacentPair.first].push_back(adjacentPair.second);
+        }
+    }
+
+    std::vector<V> getShortestPathBetween(const V& vertex1, const V& vertex2) {
+        (void)vertex2;
+
+        return adjacencyMatrix[vertex1];
+    }
+    
+
+private:
+    std::map<V, std::vector<V>> adjacencyMatrix{};
+
+};
+
+
 
 
 TEST(PathFinderTests, Instantiate) {
@@ -60,15 +82,6 @@ TEST(PathFinderTests, AddVertices) {
 
     std::string text1 = "hello";
 
-    pathfinder.find(
-        text1,
-        text1,
-        [](int x) -> bool {
-            (void)x;
-            return true;
-        }
-    );
-
     ASSERT_THAT(
         pathfinder.find(
             text1,
@@ -83,3 +96,19 @@ TEST(PathFinderTests, AddVertices) {
     );
 }
 
+
+TEST(PathFinderTests, InstantiateBFS) {
+    std::vector<std::pair<std::string, std::string>> ajdacentVertices {
+        {"hello", "goodbye"},
+        {"hello", "bye"},
+        {"name", "John"},
+        {"etc1", "etc2"}
+    };
+
+    BreadthFirstSearch<std::string> bfs{ajdacentVertices};
+
+    ASSERT_THAT(
+        bfs.getShortestPathBetween("hello", "etc2"),
+        ::testing::ElementsAre("goodbye", "bye")
+    );
+}
