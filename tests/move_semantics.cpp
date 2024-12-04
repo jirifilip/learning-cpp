@@ -180,3 +180,38 @@ TEST(MoveSemantics, ConvertToRValue) {
 
     ASSERT_EQ(static_cast<int&&>(i1), 4);
 }
+
+
+TEST(MoveSemantics, ChangingRRefsValues) {
+    int&& rref{ 10 };
+    ASSERT_EQ(rref, 10);
+
+    rref = 20;
+    ASSERT_EQ(rref, 20);
+
+    int&& i = 5;
+    ASSERT_EQ(i, 5);    
+}
+
+
+std::string func(const int& lref) {
+    (void) lref;
+    return "lvalue";
+}
+
+
+std::string func(const int&& rref) {
+    (void) rref;
+    return "rvalue";
+}
+
+
+TEST(MoveSemantics, PassingLRValuesToFunctions) {
+    int x { 5 };
+    ASSERT_EQ(func(x), "lvalue");
+
+    ASSERT_EQ(func(5), "rvalue");
+
+    int &&y { 5 };
+    ASSERT_EQ(func(y), "lvalue");
+}
