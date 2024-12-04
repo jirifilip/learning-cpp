@@ -16,6 +16,7 @@
 #include "user_types.cpp"
 #include "pathfinder.cpp"
 #include "move_semantics.cpp"
+#include "classes.cpp"
 
 
 std::vector<int> readNumbers(std::istream& input) {
