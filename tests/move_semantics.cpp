@@ -73,3 +73,81 @@ TEST(MoveSemantics, CustomAutoPointer) {
     (void)(*nullResource);
     delete nullResource;
 }
+
+
+template <typename T>
+class RValueMove {
+private:
+    T* pointer;
+
+public:
+    RValueMove(T* pointer): pointer(pointer) {}
+
+    RValueMove(RValueMove& right) = delete;
+
+    RValueMove(RValueMove&& right) noexcept : pointer(right.pointer) {
+        right.pointer = nullptr;
+    }
+    
+    ~RValueMove() {
+        delete pointer;
+    }
+
+    T& operator*() const {
+        return *pointer;
+    }
+
+    RValueMove& operator= (RValueMove& right) = delete;
+
+    RValueMove& operator= (RValueMove&& right) noexcept {
+        if (&right = this) {
+            return *this;
+        }
+
+        delete pointer;
+
+        pointer = right.pointer;
+        right.pointer = nullptr;
+
+        return *this;
+    }
+
+    bool isNull() {
+        return pointer == nullptr;
+    }
+};
+
+
+RValueMove<Resource> generateResource() {
+    RValueMove<Resource> r = { new Resource() };
+    return r;
+}
+
+
+TEST(MoveSemantics, BasicRValues) {
+    int&& rInt { 5 };    
+
+    ASSERT_EQ(rInt, 5);
+}
+
+
+TEST(MoveSemantics, MovableClass) {
+    RValueMove<Resource> r1 { generateResource() };
+
+    ASSERT_FALSE(r1.isNull());
+}
+
+
+template <typename T>
+std::remove_reference_t<T>&& myMove(T&& input) {
+    return static_cast<std::remove_reference_t<T>&&>(input);
+}
+
+
+TEST(MoveSemantics, MyMove) {
+    RValueMove<Resource> r1 { generateResource() };
+    RValueMove<Resource> r2 { myMove(r1) };
+
+    ASSERT_TRUE(r1.isNull());
+    ASSERT_FALSE(r2.isNull());
+}
