@@ -151,3 +151,14 @@ TEST(MoveSemantics, MyMove) {
     ASSERT_TRUE(r1.isNull());
     ASSERT_FALSE(r2.isNull());
 }
+
+
+TEST(MovieSemantics, PlayingWithConversions) {
+    double d { 3.5 };
+
+    int i { static_cast<int>(d) };
+    int iAssignment = d;
+
+    ASSERT_EQ(i, 3);
+    ASSERT_EQ(iAssignment, 3);
+}
