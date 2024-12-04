@@ -153,7 +153,7 @@ TEST(MoveSemantics, MyMove) {
 }
 
 
-TEST(MovieSemantics, PlayingWithConversions) {
+TEST(MoveSemantics, PlayingWithConversions) {
     double d { 3.5 };
 
     int i { static_cast<int>(d) };
@@ -161,4 +161,22 @@ TEST(MovieSemantics, PlayingWithConversions) {
 
     ASSERT_EQ(i, 3);
     ASSERT_EQ(iAssignment, 3);
+}
+
+
+TEST(MoveSemantics, ConvertToRValue) {
+    int i1 = 4;
+    ASSERT_EQ(i1, 4);
+
+    int i2{ 4 };
+    ASSERT_EQ(i2, 4);
+
+    int i3{ 5 };
+    int i4{ i3 };
+    ASSERT_EQ(i4, 5);
+
+    int i1Ref{ i1 };
+    ASSERT_EQ(i1Ref, 4);
+
+    ASSERT_EQ(static_cast<int&&>(i1), 4);
 }
