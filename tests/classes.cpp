@@ -298,3 +298,83 @@ TEST(ClassesTest, TestRValueCasting) {
     ASSERT_FALSE(uToMove3.isNull());
 
 }
+
+
+class ConstructorTypeConversion {
+public:
+    int a, b;
+    ConstructorTypeConversion(int a, int b) :
+        a { a },
+        b { b } {}
+};
+
+
+TEST(ClassesTest, TypeConversion) {
+    ConstructorTypeConversion c1(0.2, 0.2);
+    
+    // Narrowing conversion error:
+    // ConstructorTypeConversion c2 { 0.2, 0.2 };
+
+    ASSERT_EQ(c1.a, 0);
+    ASSERT_EQ(c1.b, 0);
+
+}
+
+
+class IntPair {
+public:
+    int a, b;
+
+    IntPair(int a, int b) : a { a }, b { b } {}; 
+};
+
+
+std::string pairToString(IntPair pair) {
+    return "IntPair(" + std::to_string(pair.a) + ", " + std::to_string(pair.b) + ")";
+}
+
+
+std::string pairRefToString(IntPair& pair) {
+    return "IntPair(" + std::to_string(pair.a) + ", " + std::to_string(pair.b) + ")";
+}
+
+
+TEST(ClassesTest, TemporaryObjects) {
+    ASSERT_EQ(pairToString({ 2, 3}), "IntPair(2, 3)");
+    ASSERT_EQ(pairToString(IntPair(2, 3)), "IntPair(2, 3)");
+}
+
+
+class CopyConstructor {
+public:
+    int a;
+    int b;
+
+    CopyConstructor(int a, int b) : a { a }, b { b } {}
+
+    CopyConstructor(const CopyConstructor& other) : a { other.a }, b { other.b } {}
+};
+
+
+class ImplicitCopyConstructor {
+public:
+    int a;
+    int b;
+
+    ImplicitCopyConstructor(int a, int b) : a { a }, b { b + 1 } {}
+};
+
+
+TEST(ClassesTest, TestCopyConstructor) {
+    CopyConstructor cp1 { 1, 2 };
+    CopyConstructor cp2 { cp2 };
+
+    ImplicitCopyConstructor i1 {1, 2};
+    ImplicitCopyConstructor i2 { i1 };
+
+    ASSERT_EQ(i1.a, 1);
+    ASSERT_EQ(i1.b, 3);
+
+    ASSERT_EQ(i2.a, 1);
+    ASSERT_EQ(i2.b, 3);
+}
