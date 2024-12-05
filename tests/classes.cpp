@@ -191,3 +191,62 @@ TEST(ClassesTest, CustomInitializerList) {
     ASSERT_EQ(c.sum, 35);
     ASSERT_EQ(c.mean, 7);
 }
+
+
+TEST(ClassesTest, TestReferenceRemoval) {
+    ASSERT_TRUE((std::is_same<int, int>()).value);
+    ASSERT_FALSE((std::is_same<int, int&>()).value);
+    ASSERT_TRUE(
+        (
+            std::is_same<int, std::remove_reference<int&>::type>()
+        ).value
+    );
+    ASSERT_TRUE(
+        (
+            std::is_same<int, std::remove_reference<int&&>::type>()
+        ).value
+    );
+}
+
+
+template <typename T>
+class CustomUniquePointer {
+private:
+    T pointer;
+
+public:
+    CustomUniquePointer(T pointer): pointer(pointer) {}
+
+    CustomUniquePointer(CustomUniquePointer& customUniquePointer) = delete;
+
+    ~CustomUniquePointer() {
+        delete pointer;
+    }
+
+    CustomUniquePointer(CustomUniquePointer&& customUniquePointer) {
+        this.pointer = customUniquePointer.pointer;
+        customUniquePointer.pointer = nullptr;
+    }
+
+    CustomUniquePointer& operator= (CustomUniquePointer& right) = delete;
+
+    CustomUniquePointer& operator= (CustomUniquePointer&& right) {
+        if (this == &right) {
+            return *this;
+        }
+
+        delete pointer;
+
+        pointer = right.pointer;
+        right.pointer = nullptr;
+
+        return *this;
+    }
+};
+
+
+TEST(ClassesTest, TestRValueCasting) {
+    // CustomUniquePointer u1{ new std::string("hello") };
+    // CustomUniquePointer u2{ u1 };
+    // CustomUniquePointer u3 = u2;
+}
