@@ -290,4 +290,11 @@ TEST(ClassesTest, TestRValueCasting) {
     };
     ASSERT_TRUE(uToMove.isNull());
     ASSERT_FALSE(uToMove2.isNull());
+
+    CustomUniquePointer uToMove3 {
+        static_cast<CustomUniquePointer<std::string*>&&>(uToMove2)
+    };
+    ASSERT_TRUE(uToMove2.isNull());
+    ASSERT_FALSE(uToMove3.isNull());
+
 }
