@@ -224,7 +224,7 @@ public:
     }
 
     CustomUniquePointer(CustomUniquePointer&& customUniquePointer) {
-        this.pointer = customUniquePointer.pointer;
+        pointer = customUniquePointer.pointer;
         customUniquePointer.pointer = nullptr;
     }
 
@@ -242,11 +242,52 @@ public:
 
         return *this;
     }
+
+    bool isNull() {
+        return pointer == nullptr;
+    }
 };
 
 
+int functionExpectingValue(CustomUniquePointer<std::string*> u1) {
+    (void) u1;
+    return 99;
+}
+
+template <typename T>
+std::remove_reference_t<T>&& customMove(T&& _Arg) noexcept {
+    return static_cast<std::remove_reference_t<T>&&>(_Arg);
+}
+
+
 TEST(ClassesTest, TestRValueCasting) {
-    // CustomUniquePointer u1{ new std::string("hello") };
-    // CustomUniquePointer u2{ u1 };
-    // CustomUniquePointer u3 = u2;
+    CustomUniquePointer u1{ new std::string("hello") };
+
+    ASSERT_EQ(
+        functionExpectingValue(std::move(u1)),
+        99
+    );
+    ASSERT_TRUE(u1.isNull());
+    
+    CustomUniquePointer u2{ new std::string("hello") };
+    CustomUniquePointer u3 = std::move(u2);
+    ASSERT_TRUE(u2.isNull());
+    ASSERT_FALSE(u3.isNull());
+
+    CustomUniquePointer u4 = std::move(u3);
+    ASSERT_TRUE(u3.isNull());
+    ASSERT_FALSE(u4.isNull());
+
+    CustomUniquePointer u5 = customMove(u4);
+    ASSERT_TRUE(u4.isNull());
+    ASSERT_FALSE(u5.isNull());
+
+    // custom move implemented by hand
+    CustomUniquePointer<std::string*> uToMove{ new std::string("hello") };
+    
+    CustomUniquePointer uToMove2 {
+        static_cast<std::remove_reference<CustomUniquePointer<std::string*>>::type&&>(uToMove)
+    };
+    ASSERT_TRUE(uToMove.isNull());
+    ASSERT_FALSE(uToMove2.isNull());
 }
