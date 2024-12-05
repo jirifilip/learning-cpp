@@ -378,3 +378,21 @@ TEST(ClassesTest, TestCopyConstructor) {
     ASSERT_EQ(i2.a, 1);
     ASSERT_EQ(i2.b, 3);
 }
+
+
+class ImplicitConversion {
+public:
+    int x;
+
+    ImplicitConversion(int x) : x(x) {}
+};
+
+
+std::string conversionToString(ImplicitConversion i) {
+    return std::to_string(i.x);
+}
+
+
+TEST(ClassesTest, ImplicitConversion) {
+    ASSERT_EQ(conversionToString(2), "2");
+}
